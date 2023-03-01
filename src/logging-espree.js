@@ -3,13 +3,6 @@ import * as espree from "espree";
 import * as estraverse from "estraverse";
 import * as fs from "fs/promises";
 
-function getLineOffsets(str) {
-  const regex = /\r?\n/g;
-  const offsets = [0];
-  while (regex.test(str)) offsets.push(regex.lastIndex);
-  offsets.push(str.length);
-  return offsets;
-}
 
 export async function transpile(inputFile, outputFile) {
   let input = await fs.readFile(inputFile, 'utf-8')
@@ -21,26 +14,40 @@ export async function transpile(inputFile, outputFile) {
   await fs.writeFile(outputFile, output);
 }
 
-export function addLogging(code) {
-  let lineStarts = getLineOffsets(code);
-  let lineNum = 0;   
-  const ast = espree.parse(code, { ecmaVersion: 6 });
+/**
+ * @desc Adds logging to the input code.
+ * @param {string} code The code to add logging to.
+ */
+export function addLogging(code) {  
+  const ast = espree.parse(code, { ecmaVersion: 6 }, { loc: true });
   estraverse.traverse(ast, {
     enter: function (node, parent) {
       if (node.type === 'FunctionDeclaration' ||
         node.type === 'FunctionExpression' || node.type === 'ArrowFunctionExpression') {
-          while (lineStarts[lineNum] < node.body.body[0].start) lineNum++;
-          addBeforeCode(node, lineNum - 1);
+          addBeforeCode(node);
       }
     }
   });
   return escodegen.generate(ast);
 }
 
-function addBeforeCode(node, lineNum) {
+/**
+ * @desc Adds a console.log statement before the function
+ * @param {Object} node the function node
+ */
+function addBeforeCode(node) {
   let name = node.id ? node.id.name : '<anonymous function>';
+  let lineNum = node.loc.start.line;
   let params = node.params.map(function (argumentos) {
-    return "${ " + argumentos.name + " }";
+    if (argumentos.type === 'Identifier') {
+      return argumentos.name;
+    }
+    else if (argumentos.type === 'AssignmentPattern') {
+      return argumentos.left.name + "=" + argumentos.right.name;
+    }
+    else if (argumentos.type === 'RestElement') {
+      return "..." + argumentos.argument.name;
+    }
   });
   params = params.join(', ');
   let beforeCode = `console.log(\`Entering ${name}(${params}) at line ${lineNum}\`);`;

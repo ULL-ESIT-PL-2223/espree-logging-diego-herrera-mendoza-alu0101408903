@@ -1,0 +1,4 @@
+Entering factorial(7) at line 1
+5040
+Entering power(10, 3) at line 12
+1000

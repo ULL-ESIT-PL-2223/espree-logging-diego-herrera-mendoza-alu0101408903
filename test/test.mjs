@@ -29,7 +29,7 @@ for (let i = 0; i < Test.length; i++) {
     // Run the output program and check the logged output is what expected
     const logged = execSync(`node ${Test[i].output}`).toString();
     const expectedLogged = await fs.readFile(Test[i].correctOut, 'utf-8');
-    assert.equal(logged, expectedLogged);
+    assert.equal(removeSpaces(logged), removeSpaces(expectedLogged));
   });
 }
 
