@@ -185,4 +185,4 @@ jobs:
         uses: actions/setup-node@v2
       - run: npm ci; npm test
 ```
-![github](./docs/github.png)
+![github](./docs/actions.png)
