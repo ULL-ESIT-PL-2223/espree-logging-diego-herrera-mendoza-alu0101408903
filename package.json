@@ -8,7 +8,7 @@
     },
     "scripts": {
         "test": "mocha test/test.mjs",
-        "cov": "nyc npm test",
+        "cov": "c8 npm test",
         "test1": "./bin/calc2js.js test/data/test1.js",
         "clean": "rm -rf test/data/out*"
     },
@@ -23,6 +23,7 @@
     "version": "0.3.1",
     "devDependencies": {
         "mocha": "^10.2.0",
-        "nyc": "^15.1.0"
+        "nyc": "^15.1.0",
+        "c8": "^7.7.3"
     }
 }

@@ -148,7 +148,7 @@ Al ejecutar los test se obtiene el siguiente resultado:
 
 ![test](./docs/test.png)
 
-Debido a que existe una incompatibilidad entre nyc y los módulos de ES6 no se puede realizar un correcto estudio de cobertura.
+Hacemos un estudio de cobertura con C8
 
 ![coverage](./docs/coverage.png)
 
